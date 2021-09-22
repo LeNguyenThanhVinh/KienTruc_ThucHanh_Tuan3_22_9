@@ -27,8 +27,20 @@ public class AuthController {
         return userService.createUser(user);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user){
 
+        UserPrincipal userPrincipal =
+                userService.findByUsername(user.getUsername());
 
+        if (null == user || !new BCryptPasswordEncoder()
+                .matches(user.getPassword(), userPrincipal.getPassword())) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Account or password is not valid!");
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login Success!!!");
+    }
 
 
 
